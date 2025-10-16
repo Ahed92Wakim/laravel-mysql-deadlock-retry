@@ -11,7 +11,7 @@ class RetryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Register bindings or helpers here (if needed in the future)
+        $this->app->register(TransactionLoggingServiceProvider::class);
     }
 
     /**
@@ -19,6 +19,6 @@ class RetryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // You can publish config files or perform other setup tasks here
+        //
     }
 }

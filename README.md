@@ -86,6 +86,26 @@ Each log entry includes:
 
 Set `logFileName` to segment logs by feature or workload (e.g., `logFileName: 'database/queues/payments'`).
 
+## Transaction Duration Logging
+
+Slow outer transactions can be logged automatically with timing, SQL, and request context. Publish the configuration file the first time you enable it:
+
+```bash
+php artisan vendor:publish --tag=mysql-deadlock-retry-config
+```
+
+Key options under `log_transactions`:
+
+- `enabled`: toggle the listeners without removing the service provider (defaults to `false`).
+- `environments`: whitelist environments (empty array logs everywhere).
+- `min_transaction_ms`: minimum transaction duration before a commit is logged (default `2000` ms).
+- `min_query_ms`: only include queries slower than this threshold in the payload (default `1000` ms).
+- `log_channel`, `commit_log_level`, `rollback_log_level`: route messages to a dedicated channel or adjust severity.
+
+Transactions are tracked per connection, including nested transactions; only the outermost frame is logged, and rollbacks capture the last executed query for quick diagnosis.
+
+> Need finer control? The logging hooks now live in `MysqlDeadlocks\RetryHelper\TransactionLoggingServiceProvider`. You can opt out of auto-discovery and register that provider manually if you only want the timing logs without the retry helpers (or vice versa).
+
 ## Testing the Package
 
 Run the test suite with:
